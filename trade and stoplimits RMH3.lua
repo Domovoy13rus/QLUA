@@ -50,17 +50,17 @@ function OnStop()
     return 5000
 end
 
-function OnFuturesClientHolding(fut_pos)
+function OnFuturesClientHolding(fut_pos) -- функция получает значения по фьючерсным позициям. Заявки на покупку/продажу/уже имеющиеся позиции
     Total_Vol = fut_pos.totalnet
     Sell_Vol_Act = fut_pos.opensells
     Buy_Vol_Act = fut_pos.openbuys
 end
 
-function OnFuturesLimitChange(fut_limit)
+function OnFuturesLimitChange(fut_limit) -- функция получает информацию по денежным лимитам.
     FREE_MONEY = fut_limit.cbplplanned
 end
 
-function send_market_sell()
+function send_market_sell()                     -- отправка заявки на продажу
     sell_uniq_trans_id = sell_uniq_trans_id + 1
     send_market = {
         ACTION    = "NEW_ORDER",
@@ -77,7 +77,7 @@ function send_market_sell()
     message("error: " .. res)
 end
 
-function send_market_buy()
+function send_market_buy()                      -- отправка заявки на покупку
     buy_uniq_trans_id = buy_uniq_trans_id + 1
     send_market = {
         ACTION    = "NEW_ORDER",
@@ -145,18 +145,18 @@ end
 function OnQuote(CLASS, SEC)
     if CLASS == "SPBFUT" and SEC == "RMH3" then
         local gql2=getQuoteLevel2(CLASS, SEC)
-        local bu_of = nil -- переменная с заявкой на покупку
-        local sel_of = nil -- переменная с заявкой на продажу
+        local buy_of = nil -- переменная с заявкой на покупку
+        local sell_of = nil -- переменная с заявкой на продажу
         local sum = 0
         for i = tonumber(gql2.bid_count), 1, -1 do
-            bu_of = tonumber(gql2.bid[i].quantity)
-            sum = sum + bu_of
+            buy_of = tonumber(gql2.bid[i].quantity)
+            sum = sum + buy_of
             BUY_OFFERS = tostring(sum)
         end
         local sum1 = 0
         for i = 1, tonumber(gql2.offer_count) do
-            sel_of = tonumber(gql2.offer[i].quantity)
-            sum1 = sum1 + sel_of
+            sell_of = tonumber(gql2.offer[i].quantity)
+            sum1 = sum1 + sell_of
             SELL_OFFERS = tostring(sum1)
         end
     end
